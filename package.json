@@ -1,0 +1,14 @@
+{
+  "name": "circleci-live-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Live CircleCI demo page: edit banner.json, push, watch it test and deploy.",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "test:ci": "mkdir -p test-results && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-results/junit.xml \"test/*.test.js\"",
+    "build": "node scripts/build.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

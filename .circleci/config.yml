@@ -1,0 +1,50 @@
+version: 2.1
+
+# Live demo pipeline: test -> build -> deploy to Vercel.
+# `deploy` requires `test`, so a failing test means nothing ships and the
+# live page stays exactly as it was.
+#
+# Required project environment variables (set once in CircleCI, never in git):
+#   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+
+executors:
+  node:
+    docker:
+      - image: cimg/node:22.14
+
+jobs:
+  test:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: Test banner content
+          command: npm run test:ci
+      - store_test_results:
+          path: test-results
+
+  deploy:
+    executor: node
+    steps:
+      - checkout
+      # CIRCLE_BUILD_NUM and CIRCLE_SHA1 are stamped into the page footer.
+      - run:
+          name: Build page
+          command: npm run build
+      - run:
+          name: Deploy to Vercel (production)
+          command: |
+            npx --yes vercel@50.11.0 deploy dist --prod --yes --token "$VERCEL_TOKEN"
+
+workflows:
+  demo:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - main
+                - /^demo-moo-.*/

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{HEADLINE}}</title>
+  <style>
+    :root {
+      --bg: {{BACKGROUND}};
+      --accent: {{ACCENT}};
+      --text: {{TEXT}};
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6vw;
+      border-left: 1.2vw solid var(--accent);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      line-height: 1.1;
+      font-weight: 800;
+    }
+    p.subline {
+      margin: 1.5rem 0 0;
+      font-size: clamp(1.25rem, 3vw, 2.5rem);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    footer {
+      padding: 1rem 6vw;
+      font-size: 1.25rem;
+      opacity: 0.9;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    footer b { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>{{HEADLINE}}</h1>
+    <p class="subline">{{SUBLINE}}</p>
+  </main>
+  <footer>
+    Build <b>#{{BUILD}}</b> &middot; commit <b>{{SHA}}</b> &middot; deployed {{DEPLOYED_AT}}
+  </footer>
+</body>
+</html>
