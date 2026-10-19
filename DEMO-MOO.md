@@ -17,7 +17,7 @@ The pipeline deploys from `main` and any `demo-moo-*` branch. Every other branch
 
 ## Pre-flight (do all of this tonight, and 15 minutes before)
 
-- [ ] Live URL opens: **`https://<your-project>.vercel.app`** (use this stable URL, not the long per-deploy URL, which can be login-protected).
+- [ ] Live URL opens: **`https://circleci-live-demo.vercel.app`** (use this stable URL, not the long per-deploy URL, which can be login-protected).
 - [ ] Last pipeline on `demo-moo-base` is green. Footer shows a real build number, not `#local`.
 - [ ] Tabs open: live page, CircleCI pipeline list, `banner.json` on GitHub, your editor on `demo-moo-base`.
 - [ ] Terminal in the repo: `git switch demo-moo-base && git pull`
