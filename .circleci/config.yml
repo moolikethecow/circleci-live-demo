@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Deploy to Vercel (production)
           command: |
-            npx --yes vercel@50.11.0 deploy dist --prod --yes --token "$VERCEL_TOKEN"
+            npx --yes vercel@64.7.0 deploy dist --prod --yes --token "$VERCEL_TOKEN"
 
 workflows:
   demo:
