@@ -2,16 +2,21 @@
 <html lang="en" data-theme="{{THEME}}">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{{HEADLINE}}</title>
     <style>
       {{THEME_CSS}}
       * {
         box-sizing: border-box;
       }
+      html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
       body {
         margin: 0;
         min-height: 100vh;
+        min-height: 100dvh; /* phones: ignore the collapsing address bar */
         display: flex;
         flex-direction: column;
         background: var(--bg);
@@ -27,7 +32,7 @@
         display: flex;
         align-items: center;
         gap: 4vw;
-        padding: 5vw 6vw;
+        padding: 5vw max(6vw, env(safe-area-inset-right)) 5vw max(6vw, env(safe-area-inset-left));
         border-left: 1.2vw solid var(--accent);
         transition: border-color 0.6s ease;
       }
@@ -37,11 +42,13 @@
       }
       h1 {
         margin: 0;
-        font-size: clamp(3rem, 13vw, 9rem);
+        font-size: clamp(2.5rem, 13vw, 9rem);
         line-height: 1.04;
         font-weight: 800;
         letter-spacing: -0.02em;
         overflow-wrap: break-word;
+        -webkit-hyphens: auto;
+        hyphens: auto; /* long words wrap as "Congratula-tions" on narrow phones */
       }
       p.subline {
         margin: 1.5rem 0 0;
@@ -91,8 +98,9 @@
         }
       }
       footer {
-        padding: 1rem 6vw;
-        font-size: 1.25rem;
+        padding: 1rem max(6vw, env(safe-area-inset-right))
+          max(1rem, env(safe-area-inset-bottom)) max(6vw, env(safe-area-inset-left));
+        font-size: clamp(0.8rem, 3.4vw, 1.25rem);
         opacity: 0.9;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       }
@@ -105,7 +113,7 @@
         top: 0;
         left: 0;
         right: 0;
-        padding: 1rem 6vw;
+        padding: max(1rem, env(safe-area-inset-top)) 6vw 1rem;
         background: var(--accent);
         color: var(--bg);
         font-size: clamp(1.1rem, 2.4vw, 1.75rem);
