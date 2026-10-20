@@ -174,7 +174,7 @@
         var THEMES = ["midnight", "slime"];
         var started = Date.now();
         var current = document.body.getAttribute("data-build");
-        var inflight = false;
+        var inflightSince = 0; // 0 = no request in flight
         var toastTimer = null;
 
         function $(id) {
@@ -210,12 +210,14 @@
         }
 
         function check() {
-          if (document.hidden || inflight) return;
+          if (document.hidden) return;
+          // A request stuck on bad Wi-Fi must not stop polling: give up on it after 8 seconds.
+          if (inflightSince && Date.now() - inflightSince < 8000) return;
           if (Date.now() - started > MAX_MS) {
             clearInterval(timer);
             return;
           }
-          inflight = true;
+          var mine = (inflightSince = Date.now());
           fetch("version.json?t=" + Date.now(), { cache: "no-store" })
             .then(function (r) {
               return r.ok ? r.json() : null;
@@ -225,7 +227,7 @@
             })
             .catch(function () {})
             .then(function () {
-              inflight = false;
+              if (inflightSince === mine) inflightSince = 0;
             });
         }
 
