@@ -39,6 +39,13 @@
       main {
         flex: 1;
         min-width: 0;
+        container-type: inline-size; /* lets the headline size itself to the space it has */
+      }
+      .logo {
+        display: block;
+        height: clamp(2.25rem, 5vw, 5rem);
+        width: auto;
+        margin-bottom: clamp(1.25rem, 3vw, 3rem);
       }
       h1 {
         margin: 0;
@@ -47,6 +54,7 @@
         font-weight: 800;
         letter-spacing: -0.02em;
         overflow-wrap: break-word;
+        text-wrap: balance; /* even line lengths, no lonely last word */
         -webkit-hyphens: auto;
         hyphens: auto; /* long words wrap as "Congratula-tions" on narrow phones */
       }
@@ -85,6 +93,7 @@
         /* Leave room for the QR card next to the headline. */
         h1 {
           font-size: clamp(3rem, 8vw, 9rem);
+          font-size: min(8.4cqi, 9rem); /* about 20 characters per line beside the QR card */
         }
       }
       /* Projector: a bigger QR so it scans from the back of the room. */
@@ -156,6 +165,20 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="stage">
       <main>
+        <img
+          class="logo logo-white"
+          src="brand/circleci-logo-white.png"
+          width="1200"
+          height="288"
+          alt="CircleCI"
+        />
+        <img
+          class="logo logo-dark"
+          src="brand/circleci-logo-dark.png"
+          width="1200"
+          height="288"
+          alt="CircleCI"
+        />
         <h1 id="headline">{{HEADLINE}}</h1>
         <p class="subline" id="subline">{{SUBLINE}}</p>
       </main>

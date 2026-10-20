@@ -6,6 +6,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 const { execFileSync } = require("node:child_process");
 const banner = require("../banner.json");
+const themes = require("../src/themes.json");
 
 const root = path.join(__dirname, "..");
 
@@ -46,6 +47,19 @@ describe("Built page", () => {
     assert.ok(html.includes(`data-theme="${banner.theme}"`), "Built page is missing its theme");
     assert.ok(html.includes("Follow along on your phone"), "Built page is missing the QR card");
     assert.ok(html.includes("brand/qr-live-demo.png"), "Built page does not show the QR image");
+  });
+
+  test("built page must show the CircleCI logo, in a version that suits every theme", () => {
+    const html = build({});
+    for (const file of ["circleci-logo-white.png", "circleci-logo-dark.png"]) {
+      assert.ok(html.includes(`brand/${file}`), `Built page does not show brand/${file}`);
+    }
+    for (const [name, theme] of Object.entries(themes)) {
+      assert.ok(
+        ["white", "dark"].includes(theme.logo),
+        `Theme ${name} must say which logo to use ("white" or "dark"), got ${theme.logo}`,
+      );
+    }
   });
 
   test("built page script must be valid JavaScript", () => {

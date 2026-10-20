@@ -24,11 +24,15 @@ const escapeHtml = (s) =>
   );
 
 // One CSS block per theme; the page switches theme by changing <html data-theme>.
+// Each theme also names which logo file reads well on its background.
 const themeCss = Object.entries(themes)
-  .map(
-    ([name, t]) =>
-      `:root[data-theme="${name}"] { --bg: ${t.background}; --text: ${t.text}; --accent: ${t.accent}; }`,
-  )
+  .map(([name, t]) => {
+    const hidden = t.logo === "white" ? "dark" : "white";
+    return (
+      `:root[data-theme="${name}"] { --bg: ${t.background}; --text: ${t.text}; --accent: ${t.accent}; }\n` +
+      `      :root[data-theme="${name}"] .logo-${hidden} { display: none; }`
+    );
+  })
   .join("\n      ");
 
 const now = new Date();
