@@ -8,7 +8,18 @@ const { execFileSync } = require("node:child_process");
 
 const root = path.join(__dirname, "..");
 
-// Runs the page's own polling script against a tiny fake browser.
+// Runs the page's own polling script against a tiny fake browser so the tests
+// exercise the real shipped code, not a copy. Builds the site at `buildNumber`,
+// pulls the <script> out of the generated index.html, and evaluates it inside
+// a vm context with just enough DOM to make it run.
+//
+// Returns a handle:
+//   elements  map of getElementById(id) results — read .textContent to assert
+//             on what the script wrote (e.g. headline, subline, stamp-time).
+//   attrs     map of attributes set on document.documentElement, so tests can
+//             check that data-theme was switched.
+//   poll(v)   queue `v` as the next fetch response and run one tick of the
+//             polling interval. Resolves once microtasks have drained.
 function startPage(buildNumber) {
   const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "live-demo-"));
   execFileSync("node", [path.join(root, "scripts", "build.js")], {

@@ -24,7 +24,9 @@ const escapeHtml = (s) =>
   );
 
 // One CSS block per theme; the page switches theme by changing <html data-theme>.
-// Each theme also names which logo file reads well on its background.
+// Each theme also names which logo file reads well on its background — we ship
+// both <img> tags and hide the wrong one per theme, so the live-update script
+// can switch themes without touching the DOM.
 const themeCss = Object.entries(themes)
   .map(([name, t]) => {
     const hidden = t.logo === "white" ? "dark" : "white";
@@ -60,6 +62,9 @@ const values = {
   DEPLOYED_AT: pacific(now),
 };
 
+// Strict substitution: an unknown {{PLACEHOLDER}} throws rather than silently
+// leaving the raw text in the shipped page. The build-output tests also check
+// that no {{...}} escapes to production.
 const html = template.replace(/{{(\w+)}}/g, (_, key) => {
   if (!(key in values)) throw new Error(`Unknown placeholder {{${key}}} in template`);
   return values[key];

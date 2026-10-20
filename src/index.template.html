@@ -233,6 +233,10 @@
           return isNaN(a) || isNaN(b) ? String(next) !== current : a > b;
         }
 
+        // Swap the page over to a newly deployed build in place (no reload).
+        // Only called for a strictly newer build — see isNewer() — so this is
+        // always a forward step. Updates both the visible DOM and the fields
+        // the next poll compares against (current, data-theme).
         function apply(v) {
           current = String(v.build);
           if (THEMES.indexOf(v.theme) !== -1) {
@@ -258,6 +262,9 @@
           showToast(current);
         }
 
+        // One tick of the polling loop: skip when the tab is hidden, debounce
+        // overlapping fetches, stop entirely once MAX_MS has elapsed so idle
+        // phones left on the page overnight don't keep polling forever.
         function check() {
           if (document.hidden) return;
           // A request stuck on bad Wi-Fi must not stop polling: give up on it after 8 seconds.
