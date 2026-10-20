@@ -1,4 +1,4 @@
-const test = require("node:test");
+const { describe, test } = require("node:test");
 const assert = require("node:assert/strict");
 const banner = require("../banner.json");
 
@@ -15,18 +15,20 @@ function contrast(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-test("banner text must be readable against the background", () => {
-  const ratio = contrast(banner.text, banner.background);
-  assert.ok(
-    ratio >= MIN_CONTRAST,
-    `Banner text and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
-  );
-});
+describe("Banner readability", () => {
+  test("banner text must be readable against the background", () => {
+    const ratio = contrast(banner.text, banner.background);
+    assert.ok(
+      ratio >= MIN_CONTRAST,
+      `Banner text and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
+    );
+  });
 
-test("banner accent must be readable against the background", () => {
-  const ratio = contrast(banner.accent, banner.background);
-  assert.ok(
-    ratio >= MIN_CONTRAST,
-    `Banner accent and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
-  );
+  test("banner accent must be readable against the background", () => {
+    const ratio = contrast(banner.accent, banner.background);
+    assert.ok(
+      ratio >= MIN_CONTRAST,
+      `Banner accent and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
+    );
+  });
 });
