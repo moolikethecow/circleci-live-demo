@@ -1,6 +1,6 @@
 # DEMO-MOO.md: on-stage runbook
 
-**Audience:** new hires (sales, marketing, ops). **Length:** about 8 minutes of talking, with waits.
+**Audience:** new hires (sales, marketing, ops). **Length:** about 8 minutes of talking. The waits are short (under a minute), so plan filler talk for them.
 **The one idea:** "Every change gets tested before it can reach the live page. Good change: it ships. Bad change: it's stopped."
 
 ## How the pieces fit
@@ -26,20 +26,20 @@ The pipeline deploys from `main` and any `demo-moo-*` branch. Every other branch
 
 ## Expected timings
 
-These are estimates until you rehearse. Replace them with what you actually see.
+Measured on one rehearsal run (Oct 19). Expect a little variation, and re-check them in your own rehearsal.
 
 | Step | What you'll see | Typical wait |
 |---|---|---|
-| Push → pipeline appears | New pipeline at the top of the list | 5 to 15 s |
-| `test` job | Container starts, 3 checks run | 15 to 30 s |
-| `deploy` job | Build page, deploy to Vercel | 40 to 70 s |
+| Push → pipeline appears | New pipeline at the top of the list | about 5 s |
+| `test` job | Container starts, 3 checks run | about 10 s |
+| `deploy` job | Build page, deploy to Vercel | about 15 to 20 s |
 | Live page updates | Refresh shows new text and build number | right after `deploy` is green |
-| **Happy path, push to refresh** | | **about 1.5 to 2 min** |
-| **Red path, push to red** | `test` fails, `deploy` never starts | **about 30 s** |
+| **Happy path, push to refresh** | | **about 30 to 45 s** |
+| **Red path, push to red** | `test` fails, `deploy` never starts | **about 10 to 15 s** |
 
 Talk-over while waiting is in each step below.
 
-## 1. Happy path: change the banner, watch it go live (about 2 min)
+## 1. Happy path: change the banner, watch it go live (about 2 min including talking)
 
 1. Show the live page. Point at the footer: "See this build number? Remember it."
 2. Open `banner.json`. Edit **one value**, for example:
