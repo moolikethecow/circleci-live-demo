@@ -62,6 +62,16 @@ describe("Built page", () => {
     }
   });
 
+  test("built page must show the deploy time in Pacific time", () => {
+    const html = build({});
+    assert.match(
+      html,
+      /deployed <span id="stamp-time">[A-Z][a-z]{2} \d{1,2}, \d{1,2}:\d{2}\s[AP]M P[SD]T</,
+      "Footer deploy time is not in Pacific time like 'Oct 20, 8:37 AM PDT'",
+    );
+    assert.ok(!html.includes(" UTC"), "Footer still shows a UTC time");
+  });
+
   test("built page script must be valid JavaScript", () => {
     const html = build({});
     const script = html.match(/<script>([\s\S]*?)<\/script>/);

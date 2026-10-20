@@ -241,7 +241,14 @@
           document.title = v.headline;
           $("stamp-build").textContent = "#" + current;
           $("stamp-sha").textContent = v.sha;
-          $("stamp-time").textContent = String(v.builtAt).replace("T", " ").slice(0, 16) + " UTC";
+          $("stamp-time").textContent = new Date(v.builtAt).toLocaleString("en-US", {
+            timeZone: "America/Los_Angeles",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            timeZoneName: "short",
+          });
           h1.classList.remove("just-deployed");
           void h1.offsetWidth; // restart the animation
           h1.classList.add("just-deployed");

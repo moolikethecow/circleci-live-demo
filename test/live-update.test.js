@@ -72,6 +72,8 @@ describe("Live update script", () => {
     assert.equal(page.elements.headline.textContent, "Brand new headline");
     assert.equal(page.attrs["data-theme"], "slime");
     assert.equal(page.elements.toast.textContent, "Updated by build #6, just now");
+    // builtAt is 15:00 UTC on Oct 20, which is 8:00 AM Pacific (PDT).
+    assert.match(page.elements["stamp-time"].textContent, /^Oct 20, 8:00\sAM PDT$/);
   });
 
   test("page must ignore an older build, so it never flip-flops during a deploy", async () => {

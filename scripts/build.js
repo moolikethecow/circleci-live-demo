@@ -39,6 +39,17 @@ const now = new Date();
 const build = process.env.CIRCLE_BUILD_NUM || "local";
 const sha = (process.env.CIRCLE_SHA1 || "dev").slice(0, 7);
 
+// Shown in Pacific time, e.g. "Oct 20, 8:37 AM PDT". Keep in sync with the page script.
+const pacific = (date) =>
+  date.toLocaleString("en-US", {
+    timeZone: "America/Los_Angeles",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+
 const values = {
   HEADLINE: escapeHtml(banner.headline),
   SUBLINE: escapeHtml(banner.subline),
@@ -46,7 +57,7 @@ const values = {
   THEME_CSS: themeCss,
   BUILD: escapeHtml(build),
   SHA: escapeHtml(sha),
-  DEPLOYED_AT: now.toISOString().replace("T", " ").slice(0, 16) + " UTC",
+  DEPLOYED_AT: pacific(now),
 };
 
 const html = template.replace(/{{(\w+)}}/g, (_, key) => {

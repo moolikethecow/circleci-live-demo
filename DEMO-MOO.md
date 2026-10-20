@@ -13,7 +13,7 @@
 | `.circleci/config.yml`   | `install` → (`lint`, `unit-tests` ×2, `security-scan`) → `build` → `deploy`                         |
 | `brand/`                 | Logos for your slides and the QR code, at `https://circleci-live-demo.vercel.app/brand/<file>`      |
 | `dist/version.json`      | Written by every build (build number, SHA, time, headline, theme). Phones poll it every 3 s         |
-| Page footer              | `Build #<n> · commit <sha> · deployed <time>`. `<n>` is the **build** job's number in that pipeline |
+| Page footer              | `Build #<n> · commit <sha> · deployed <Pacific time>`. `<n>` is the **build** job's number in that pipeline |
 
 Branches:
 
