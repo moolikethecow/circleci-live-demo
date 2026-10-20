@@ -39,8 +39,10 @@ jobs:
     steps:
       - checkout
       # Restores the npm cache when package-lock.json is unchanged ("Found a cache").
+      # (The orb only caches when it is given an explicit install command.)
       - node/install-packages:
           pkg-manager: npm
+          override-ci-command: npm ci --prefer-offline
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -109,10 +111,20 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
+      # Cache the downloaded Vercel CLI so later runs skip the download.
+      - restore_cache:
+          keys:
+            - vercel-cli-64.7.0-v1
       - run:
           name: Deploy to Vercel (production)
           command: |
             npx --yes vercel@64.7.0 deploy dist --prod --yes --token "$VERCEL_TOKEN"
+      # Only the package caches, never ~/.npm/_logs (logs could echo the command line).
+      - save_cache:
+          key: vercel-cli-64.7.0-v1
+          paths:
+            - ~/.npm/_cacache
+            - ~/.npm/_npx
 
 workflows:
   demo:
