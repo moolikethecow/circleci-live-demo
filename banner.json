@@ -1,7 +1,5 @@
 {
   "headline": "Welcome to CircleCI, October 2026 cohort",
   "subline": "Presented by Moo Olaniyan",
-  "background": "#1C273A",
-  "accent": "#00DB74",
-  "text": "#FFFFFF"
+  "theme": "midnight"
 }

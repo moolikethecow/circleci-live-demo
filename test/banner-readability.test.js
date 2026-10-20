@@ -1,6 +1,6 @@
 const { describe, test } = require("node:test");
 const assert = require("node:assert/strict");
-const banner = require("../banner.json");
+const themes = require("../src/themes.json");
 
 const MIN_CONTRAST = 4.5; // WCAG AA for normal text
 
@@ -15,20 +15,22 @@ function contrast(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-describe("Banner readability", () => {
-  test("banner text must be readable against the background", () => {
-    const ratio = contrast(banner.text, banner.background);
-    assert.ok(
-      ratio >= MIN_CONTRAST,
-      `Banner text and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
-    );
-  });
+describe("Theme readability", () => {
+  for (const [name, theme] of Object.entries(themes)) {
+    test(`${name} text must be readable against the background`, () => {
+      const ratio = contrast(theme.text, theme.background);
+      assert.ok(
+        ratio >= MIN_CONTRAST,
+        `Theme ${name} text and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
+      );
+    });
 
-  test("banner accent must be readable against the background", () => {
-    const ratio = contrast(banner.accent, banner.background);
-    assert.ok(
-      ratio >= MIN_CONTRAST,
-      `Banner accent and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
-    );
-  });
+    test(`${name} accent must be readable against the background`, () => {
+      const ratio = contrast(theme.accent, theme.background);
+      assert.ok(
+        ratio >= MIN_CONTRAST,
+        `Theme ${name} accent and background colors are too similar to read (contrast ${ratio.toFixed(1)}, need ${MIN_CONTRAST})`,
+      );
+    });
+  }
 });

@@ -5,8 +5,8 @@
   "description": "Live CircleCI demo page: edit banner.json, push, watch it test and deploy.",
   "scripts": {
     "test": "node --test \"test/*.test.js\"",
-    "lint": "prettier --check banner.json package.json scripts test",
-    "format": "prettier --write banner.json package.json scripts test",
+    "lint": "prettier --check banner.json vercel.json src/themes.json package.json scripts test",
+    "format": "prettier --write banner.json vercel.json src/themes.json package.json scripts test",
     "build": "node scripts/build.js"
   },
   "devDependencies": {

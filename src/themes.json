@@ -1,0 +1,4 @@
+{
+  "midnight": { "background": "#1C273A", "text": "#FFFFFF", "accent": "#00DB74" },
+  "slime": { "background": "#00DB74", "text": "#1C273A", "accent": "#1C273A" }
+}

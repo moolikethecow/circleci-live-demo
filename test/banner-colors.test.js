@@ -1,17 +1,19 @@
 const { describe, test } = require("node:test");
 const assert = require("node:assert/strict");
-const banner = require("../banner.json");
+const themes = require("../src/themes.json");
 
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
 
-describe("Banner colors", () => {
-  test("banner colors must be valid hex codes", () => {
-    for (const key of ["background", "accent", "text"]) {
-      assert.match(
-        banner[key],
-        HEX_COLOR,
-        `Banner ${key} color "${banner[key]}" is not a hex code like #1C273A`,
-      );
+describe("Theme colors", () => {
+  test("theme colors must be valid hex codes", () => {
+    for (const [name, theme] of Object.entries(themes)) {
+      for (const key of ["background", "accent", "text"]) {
+        assert.match(
+          theme[key],
+          HEX_COLOR,
+          `Theme ${name} ${key} color "${theme[key]}" is not a hex code like #1C273A`,
+        );
+      }
     }
   });
 });
