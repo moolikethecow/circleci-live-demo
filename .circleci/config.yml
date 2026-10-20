@@ -1,36 +1,114 @@
 version: 2.1
 
-# Live demo pipeline: test -> build -> deploy to Vercel.
-# `deploy` requires `test`, so a failing test means nothing ships and the
-# live page stays exactly as it was.
+# Live demo pipeline:
+#
+#   install -> ( lint | unit-tests x2 | security-scan ) -> build -> deploy
+#
+# SPEED       lint, unit-tests and security-scan run side by side; the tests are
+#             split across 2 machines; npm packages are cached between runs.
+# EFFICIENCY  one shared orb, one executor, one reusable command, right-sized
+#             machines, and we build once and deploy exactly what we tested.
+# GUARDRAILS  a failing test OR a failing security scan stops the pipeline
+#             before deploy ever starts.
 #
 # Required project environment variables (set once in CircleCI, never in git):
 #   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
 
+orbs:
+  # One line pulls in a shared, maintained building block (install + caching).
+  node: circleci/node@7.2.1
+
 executors:
-  node:
+  node-small:
     docker:
       - image: cimg/node:22.14
+    # You pick the machine size per job, so you only pay for what you need.
+    resource_class: small
 
-jobs:
-  test:
-    executor: node
+commands:
+  prepare:
+    description: Check out the code and bring in the dependencies installed earlier.
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/project
+
+jobs:
+  install:
+    executor: node-small
+    steps:
+      - checkout
+      # Restores the npm cache when package-lock.json is unchanged ("Found a cache").
+      - node/install-packages:
+          pkg-manager: npm
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - node_modules
+
+  lint:
+    executor: node-small
+    steps:
+      - prepare
       - run:
-          name: Test banner content
-          command: npm run test:ci
+          name: Check code formatting
+          command: npm run lint
+
+  unit-tests:
+    executor: node-small
+    parallelism: 2
+    steps:
+      - prepare
+      - run:
+          name: Run tests (split across machines)
+          command: |
+            circleci tests glob "test/*.test.js" \
+              | circleci tests run --command="xargs ./scripts/ci-test.sh" \
+                  --verbose --split-by=timings --timings-type=filename
       - store_test_results:
           path: test-results
 
-  deploy:
-    executor: node
+  security-scan:
+    executor: node-small
     steps:
       - checkout
+      - run:
+          name: Dependency audit (known vulnerabilities)
+          command: npm audit --audit-level=high
+      - run:
+          name: Install gitleaks (pinned version, checksum verified)
+          command: |
+            curl -sSL -o /tmp/gitleaks.tgz \
+              https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+            echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  /tmp/gitleaks.tgz" | sha256sum -c -
+            sudo tar -xzf /tmp/gitleaks.tgz -C /usr/local/bin gitleaks
+      - run:
+          name: Secret scan (looks for committed credentials)
+          command: ./scripts/secret-scan.sh
+
+  build:
+    executor: node-small
+    steps:
+      - prepare
       # CIRCLE_BUILD_NUM and CIRCLE_SHA1 are stamped into the page footer.
       - run:
           name: Build page
           command: npm run build
+      # Build once: this exact dist/ is what gets deployed.
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - dist
+      # Downloadable copy of the built page from the Artifacts tab.
+      - store_artifacts:
+          path: dist
+          destination: site
+
+  deploy:
+    executor: node-small
+    steps:
+      - attach_workspace:
+          at: ~/project
       - run:
           name: Deploy to Vercel (production)
           command: |
@@ -39,12 +117,32 @@ jobs:
 workflows:
   demo:
     jobs:
-      - test
+      - install
+      # These three run at the same time once install is done.
+      - lint:
+          requires: [install]
+      - unit-tests:
+          requires: [install]
+      - security-scan:
+          requires: [install]
+      # build only starts if all three above passed.
+      - build:
+          requires: [lint, unit-tests, security-scan]
+      # Manual approval gate (left OFF so the live demo doesn't stall). To turn it on:
+      #   1. uncomment the `hold` job below
+      #   2. add `hold` to deploy's `requires`
+      # - hold:
+      #     type: approval
+      #     requires: [build]
+      # deploy only starts if build passed, which means everything before it passed.
+      # Explicit branch list: the leaked-secret demo branch can never deploy.
       - deploy:
-          requires:
-            - test
+          requires: [build]
           filters:
             branches:
               only:
                 - main
-                - /^demo-moo-.*/
+                - demo-moo-base
+                - demo-moo-good-change
+                - demo-moo-bad-change
+                - pipeline-features # TEMPORARY: remove before merging to main

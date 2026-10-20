@@ -36,4 +36,6 @@ const html = template.replace(/{{(\w+)}}/g, (_, key) => {
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "index.html"), html);
 fs.cpSync(path.join(root, "brand"), path.join(outDir, "brand"), { recursive: true });
-console.log(`Built ${path.join(outDir, "index.html")} (build ${values.BUILD}, commit ${values.SHA})`);
+console.log(
+  `Built ${path.join(outDir, "index.html")} (build ${values.BUILD}, commit ${values.SHA})`,
+);

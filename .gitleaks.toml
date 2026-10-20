@@ -1,0 +1,22 @@
+title = "circleci-live-demo secret scan"
+
+[extend]
+useDefault = true
+
+# Demo rule: catches an AWS secret key assigned in any file, including
+# obviously fake values like the one on the demo-moo-leaked-secret branch.
+[[rules]]
+id = "demo-aws-secret-access-key"
+description = "AWS secret access key assigned in a file"
+regex = '''(?i)aws_secret_access_key\s*[=:]\s*['"]?[A-Za-z0-9/+=_-]{16,}'''
+keywords = ["aws_secret_access_key"]
+
+# The runbook and this file talk about the fake demo value on purpose.
+[[allowlists]]
+description = "Docs/config that describe the demo, and generated folders"
+paths = [
+  '''^DEMO-MOO\.md$''',
+  '''^\.gitleaks\.toml$''',
+  '''^node_modules/''',
+  '''^dist/''',
+]
