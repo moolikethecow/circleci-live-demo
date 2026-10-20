@@ -157,4 +157,3 @@ workflows:
                 - demo-moo-base
                 - demo-moo-good-change
                 - demo-moo-bad-change
-                - pipeline-features # TEMPORARY: remove before merging to main
