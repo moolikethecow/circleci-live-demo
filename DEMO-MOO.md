@@ -8,7 +8,7 @@
 | Thing                    | What it is                                                                                          |
 | ------------------------ | --------------------------------------------------------------------------------------------------- |
 | `banner.json`            | The only file you edit on stage: `headline`, `subline`, `theme` (`midnight` or `slime`)             |
-| `test/*.test.js`         | 7 small test files (21 plain-English checks), split across 2 machines                               |
+| `test/*.test.js`         | 8 small test files (24 plain-English checks), split across 2 machines                               |
 | `.gitleaks.toml`         | Secret-scan rules (catches committed credentials)                                                   |
 | `.circleci/config.yml`   | `install` → (`lint`, `unit-tests` ×2, `security-scan`) → `build` → `deploy`                         |
 | `brand/`                 | Logos for your slides and the QR code, at `https://circleci-live-demo.vercel.app/brand/<file>`      |

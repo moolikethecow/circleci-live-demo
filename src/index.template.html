@@ -191,6 +191,14 @@
           }, 5000);
         }
 
+        // Only move forward. While a deploy propagates, some edge servers briefly still serve
+        // the previous version.json; going "back" to it would make the page flip-flop.
+        function isNewer(next) {
+          var a = Number(next);
+          var b = Number(current);
+          return isNaN(a) || isNaN(b) ? String(next) !== current : a > b;
+        }
+
         function apply(v) {
           current = String(v.build);
           if (THEMES.indexOf(v.theme) !== -1) {
@@ -223,7 +231,7 @@
               return r.ok ? r.json() : null;
             })
             .then(function (v) {
-              if (v && String(v.build) !== current) apply(v);
+              if (v && isNewer(v.build)) apply(v);
             })
             .catch(function () {})
             .then(function () {
