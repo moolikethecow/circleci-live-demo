@@ -1,15 +1,21 @@
-// Renders src/index.template.html + banner.json into dist/index.html.
+// Renders src/index.template.html + banner.json into dist/index.html and
+// copies brand/ into dist/brand/ so the images are served with the page.
 // CircleCI injects CIRCLE_BUILD_NUM and CIRCLE_SHA1, so the live page proves
 // which pipeline run produced it.
 const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.join(__dirname, "..");
+// OUT_DIR lets tests build into a temp folder without touching dist/.
+const outDir = process.env.OUT_DIR || path.join(root, "dist");
 const banner = JSON.parse(fs.readFileSync(path.join(root, "banner.json"), "utf8"));
 const template = fs.readFileSync(path.join(root, "src", "index.template.html"), "utf8");
 
 const escapeHtml = (s) =>
-  String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  String(s).replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+  );
 
 const values = {
   HEADLINE: escapeHtml(banner.headline),
@@ -27,6 +33,7 @@ const html = template.replace(/{{(\w+)}}/g, (_, key) => {
   return values[key];
 });
 
-fs.mkdirSync(path.join(root, "dist"), { recursive: true });
-fs.writeFileSync(path.join(root, "dist", "index.html"), html);
-console.log(`Built dist/index.html (build ${values.BUILD}, commit ${values.SHA})`);
+fs.mkdirSync(outDir, { recursive: true });
+fs.writeFileSync(path.join(outDir, "index.html"), html);
+fs.cpSync(path.join(root, "brand"), path.join(outDir, "brand"), { recursive: true });
+console.log(`Built ${path.join(outDir, "index.html")} (build ${values.BUILD}, commit ${values.SHA})`);
